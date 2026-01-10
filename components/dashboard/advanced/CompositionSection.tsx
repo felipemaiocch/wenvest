@@ -78,7 +78,7 @@ export function CompositionSection({ classData, assetData }: CompositionProps) {
                                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} strokeWidth={2} stroke="#fff" />
                                 ))}
                             </Pie>
-                            <Tooltip formatter={(value: number) => `R$ ${value.toFixed(2)}`} />
+                            <Tooltip formatter={(value: number | undefined) => value ? `R$ ${value.toFixed(2)}` : 'R$ 0,00'} />
                         </PieChart>
                     </ResponsiveContainer>
                 </div>
