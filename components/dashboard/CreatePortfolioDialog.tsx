@@ -7,7 +7,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Plus, Loader2 } from 'lucide-react';
 import { createPortfolio } from '@/actions/portfolio';
-import { toast } from 'sonner';
 
 export function CreatePortfolioDialog() {
     const [open, setOpen] = useState(false);
