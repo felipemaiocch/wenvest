@@ -10,7 +10,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import { ArrowLeft, Check, Loader2 } from 'lucide-react';
 import { addTransaction } from '@/actions/transaction';
 import { getQuote } from '@/actions/finance';
-import { toast } from 'sonner';
 
 export default function AddAssetPage() {
     const router = useRouter();
