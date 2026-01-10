@@ -33,7 +33,7 @@ export function CompositionSection({ classData, assetData }: CompositionProps) {
                     <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
                             <Pie
-                                data={classData}
+                                data={classData as any}
                                 cx="50%"
                                 cy="50%"
                                 innerRadius={60}
@@ -62,30 +62,26 @@ export function CompositionSection({ classData, assetData }: CompositionProps) {
                         Por Ativo
                     </CardTitle>
                 </CardHeader>
-                <CardContent className="h-[300px]">
-                    <ResponsiveContainer width="100%" height="100%">
+                <div className="flex-1">
+                    <ResponsiveContainer width="100%" height={200}>
                         <PieChart>
                             <Pie
-                                data={assetData}
+                                data={assetData as any}
                                 cx="50%"
                                 cy="50%"
                                 innerRadius={60}
-                                outerRadius={90}
-                                paddingAngle={2}
+                                outerRadius={80}
+                                paddingAngle={5}
                                 dataKey="value"
                             >
                                 {assetData.map((entry, index) => (
-                                    <Cell key={`cell-${index}`} fill={COLORS[(index + 2) % COLORS.length]} strokeWidth={0} />
+                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} strokeWidth={2} stroke="#fff" />
                                 ))}
                             </Pie>
-                            <Tooltip
-                                formatter={(value: any) => [`R$ ${value.toLocaleString()}`, 'Valor']}
-                                contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-                            />
-                            <Legend verticalAlign="bottom" height={36} iconType="circle" />
+                            <Tooltip formatter={(value: number) => `R$ ${value.toFixed(2)}`} />
                         </PieChart>
                     </ResponsiveContainer>
-                </CardContent>
+                </div>
             </Card>
         </div>
     );
