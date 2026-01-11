@@ -1,15 +1,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Search } from 'lucide-react';
+import { Search, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { searchAssetUnified } from '@/actions/cvmApi';
 
 interface SearchResult {
-    ticker: string;
+    symbol: string;
     name: string;
-    market: 'US' | 'BR' | 'CRYPTO';
+    type: string;
 }
 
 interface AssetSearchProps {
@@ -62,17 +62,17 @@ export function AssetSearch({ onSelect }: AssetSearchProps) {
             <div className="flex flex-col gap-2">
                 {results.map((result) => (
                     <Card
-                        key={result.ticker}
+                        key={result.symbol}
                         className="cursor-pointer hover:bg-accent/50 transition-colors"
-                        onClick={() => onSelect(result.ticker)}
+                        onClick={() => onSelect(result.symbol)}
                     >
                         <CardContent className="p-3 flex items-center justify-between">
                             <div className="flex flex-col">
-                                <span className="font-bold text-base">{result.ticker}</span>
+                                <span className="font-bold text-base">{result.symbol}</span>
                                 <span className="text-xs text-muted-foreground">{result.name}</span>
                             </div>
                             <span className="text-xs font-semibold bg-muted px-2 py-1 rounded">
-                                {result.market}
+                                {result.type}
                             </span>
                         </CardContent>
                     </Card>
