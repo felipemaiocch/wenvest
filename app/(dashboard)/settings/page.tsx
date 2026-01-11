@@ -1,4 +1,6 @@
 import { ChangePasswordForm } from "@/components/settings/ChangePasswordForm";
+
+export const dynamic = 'force-dynamic';
 import { Info } from "lucide-react";
 
 export default function SettingsPage() {
