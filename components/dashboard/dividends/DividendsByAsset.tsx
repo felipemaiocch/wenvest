@@ -68,7 +68,7 @@ export function DividendsByAsset({ transactions }: DividendsByAssetProps) {
                                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} strokeWidth={0} />
                                 ))}
                             </Pie>
-                            <Tooltip formatter={(val: number) => `R$ ${val.toFixed(2)}`} />
+                            <Tooltip formatter={(val: number | undefined) => val ? `R$ ${val.toFixed(2)}` : 'R$ 0,00'} />
                         </PieChart>
                     </ResponsiveContainer>
                     <div className="absolute inset-0 flex items-center justify-center text-center pointer-events-none">
