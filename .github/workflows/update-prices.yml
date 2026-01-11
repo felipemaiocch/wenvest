@@ -1,0 +1,18 @@
+name: Update Portfolio Prices Daily
+
+on:
+  schedule:
+    # Runs every day at 18:00 UTC (15:00 Brazil time)
+    - cron: '0 18 * * *'
+  workflow_dispatch: # Allows manual trigger
+
+jobs:
+  update-prices:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Update Prices
+        run: |
+          curl -X GET \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            https://wenvest-vpu2.vercel.app/api/cron/update-prices
