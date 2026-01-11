@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -48,11 +49,26 @@ export default function LoginPage() {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
-            <Card className="w-full max-w-md border-border/60 shadow-lg">
-                <CardHeader className="space-y-1">
-                    <CardTitle className="text-2xl font-bold text-center text-emerald-600">Wenvest</CardTitle>
-                    <CardDescription className="text-center">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 p-4">
+            <Card className="w-full max-w-md shadow-2xl border-0">
+                <CardHeader className="space-y-4 pb-6">
+                    {/* Logo with dark background for contrast */}
+                    <div className="flex justify-center mb-2">
+                        <div className="bg-slate-900 px-6 py-3 rounded-lg">
+                            <Image
+                                src="https://www.wenvestadvisor.com.br/assets/images/logo-wenvest-304x96.webp"
+                                alt="Wenvest"
+                                width={180}
+                                height={57}
+                                className="object-contain"
+                                priority
+                            />
+                        </div>
+                    </div>
+                    <CardTitle className="text-2xl font-bold text-center text-slate-900">
+                        Bem-vindo de volta
+                    </CardTitle>
+                    <CardDescription className="text-center text-slate-600">
                         Entre para gerenciar seu patrimônio
                     </CardDescription>
                 </CardHeader>

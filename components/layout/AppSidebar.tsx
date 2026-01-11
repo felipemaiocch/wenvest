@@ -38,15 +38,13 @@ export function AppSidebar({ className }: { className?: string }) {
             <div className="h-16 flex items-center px-6 border-b border-[#1e293b]">
                 <div className="flex items-center gap-3 text-white font-bold text-xl tracking-tight">
                     <Image
-                        src="/wenvest-logo.png"
+                        src="https://www.wenvestadvisor.com.br/assets/images/logo-wenvest-304x96.webp"
                         alt="Wenvest"
-                        width={32}
-                        height={32}
+                        width={120}
+                        height={38}
                         className="object-contain"
                     />
-                    <span>Wenvest</span>
                 </div>
-                GlobalWealth
             </div>
         </div>
 
