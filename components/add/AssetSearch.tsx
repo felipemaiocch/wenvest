@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Search, Loader2 } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
-import { searchAssets } from '@/actions/finance';
+import { searchAssetUnified } from '@/actions/cvmApi';
 
 interface SearchResult {
     ticker: string;
@@ -22,19 +22,20 @@ export function AssetSearch({ onSelect }: AssetSearchProps) {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        const timer = setTimeout(async () => {
-            if (query.length < 2) {
-                setResults([]);
-                return;
-            }
+        if (!query || query.length < 3) {
+            setResults([]);
+            setLoading(false);
+            return;
+        }
 
+        const timer = setTimeout(async () => {
             setLoading(true);
             try {
-                const data = await searchAssets(query);
-                // Type safety check or cast if needed, action returns matching shape
-                setResults(data as any);
+                const result = await searchAssetUnified(query);
+                setResults(result ? [result] : []);
             } catch (error) {
-                console.error(error);
+                console.error('Search error:', error);
+                setResults([]);
             } finally {
                 setLoading(false);
             }
@@ -48,10 +49,11 @@ export function AssetSearch({ onSelect }: AssetSearchProps) {
             <div className="relative">
                 <Search className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
                 <Input
-                    placeholder="Busque por ativo (ex: Apple, AAPL)..."
+                    type="text"
+                    placeholder="Buscar por ticker ou CNPJ (ex: PETR4, 52.239.457/0001-57)"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
-                    className="pl-10 h-12 text-lg bg-card/50 border-primary/20 focus-visible:ring-primary"
+                    className="pl-10 bg-card/50 border-primary/20 focus-visible:ring-primary"
                     autoFocus
                 />
                 {loading && <Loader2 className="absolute right-3 top-3 h-5 w-5 animate-spin text-muted-foreground" />}
