@@ -93,21 +93,14 @@ export default function LoginPage() {
                         />
                     </div>
                 </CardContent>
-                <CardFooter className="flex flex-col gap-2">
-                    <Button className="w-full bg-emerald-600 hover:bg-emerald-700" onClick={handleLogin} disabled={loading}>
+                <CardFooter>
+                    <Button
+                        className="w-full h-11 text-base font-semibold bg-[#fcbf18] hover:bg-[#e5ad15] text-slate-900"
+                        onClick={handleLogin}
+                        disabled={loading}
+                    >
                         {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                        Entrar com Senha
-                    </Button>
-                    <div className="relative w-full">
-                        <div className="absolute inset-0 flex items-center">
-                            <span className="w-full border-t" />
-                        </div>
-                        <div className="relative flex justify-center text-xs uppercase">
-                            <span className="bg-white px-2 text-muted-foreground">Ou continue com</span>
-                        </div>
-                    </div>
-                    <Button variant="outline" className="w-full" onClick={handleMagicLink} disabled={loading}>
-                        Enviar Link Mágico (Email)
+                        Entrar
                     </Button>
                 </CardFooter>
             </Card>

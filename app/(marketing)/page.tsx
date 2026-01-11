@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 
@@ -7,8 +8,15 @@ export default function LandingPage() {
         <div className="min-h-screen bg-[#0f172a] text-white flex flex-col">
             {/* Navbar */}
             <nav className="p-6 flex items-center justify-between max-w-7xl mx-auto w-full">
-                <div className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-cyan-400">
-                    Wenvest
+                <div className="bg-slate-900 px-4 py-2 rounded-lg">
+                    <Image
+                        src="https://www.wenvestadvisor.com.br/assets/images/logo-wenvest-304x96.webp"
+                        alt="Wenvest"
+                        width={140}
+                        height={44}
+                        className="object-contain"
+                        priority
+                    />
                 </div>
                 <div className="flex gap-4">
                     <Link href="/login">
@@ -17,7 +25,7 @@ export default function LandingPage() {
                         </Button>
                     </Link>
                     <Link href="/login">
-                        <Button className="bg-emerald-500 hover:bg-emerald-600 text-white font-medium">
+                        <Button className="bg-[#fcbf18] hover:bg-[#e5ad15] text-slate-900 font-semibold">
                             Começar Agora
                         </Button>
                     </Link>
@@ -27,13 +35,13 @@ export default function LandingPage() {
             {/* Hero Section */}
             <main className="flex-1 flex flex-col items-center justify-center p-6 text-center">
                 <div className="max-w-4xl space-y-8 animate-in fade-in zoom-in duration-700">
-                    <div className="inline-block px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-sm font-medium mb-4">
+                    <div className="inline-block px-4 py-1.5 rounded-full bg-[#fcbf18]/10 border border-[#fcbf18]/20 text-[#fcbf18] text-sm font-medium mb-4">
                         Gestão de Patrimônio Global
                     </div>
 
                     <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-tight">
                         Seu patrimônio, <br />
-                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400">
+                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#fcbf18] to-yellow-300">
                             unificado e inteligente.
                         </span>
                     </h1>
@@ -45,14 +53,11 @@ export default function LandingPage() {
 
                     <div className="pt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
                         <Link href="/login">
-                            <Button size="lg" className="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold h-12 px-8 text-lg shadow-lg shadow-emerald-500/20">
+                            <Button size="lg" className="bg-[#fcbf18] hover:bg-[#e5ad15] text-slate-900 font-semibold h-12 px-8 text-lg shadow-lg shadow-[#fcbf18]/20">
                                 Acessar Plataforma
                                 <ArrowRight className="ml-2 h-5 w-5" />
                             </Button>
                         </Link>
-                        <Button size="lg" variant="outline" className="border-slate-700 text-slate-300 hover:bg-slate-800 hover:text-white h-12 px-8 text-lg">
-                            Conhecer Funcionalidades
-                        </Button>
                     </div>
                 </div>
             </main>
