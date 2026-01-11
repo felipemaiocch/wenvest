@@ -96,7 +96,7 @@ export function RiskReturnScatter({ portfolioId }: RiskReturnScatterProps) {
                         <ZAxis range={[100, 400]} />
                         <Tooltip
                             cursor={{ strokeDasharray: '3 3' }}
-                            formatter={(value: number) => `${value.toFixed(1)}%`}
+                            formatter={(value: number | undefined) => value ? `${value.toFixed(1)}%` : '0%'}
                             labelFormatter={(label) => data.find((d: any) => d.risk === label)?.ticker || ''}
                             contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
                         />

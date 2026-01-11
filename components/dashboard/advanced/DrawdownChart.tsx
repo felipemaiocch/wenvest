@@ -78,7 +78,7 @@ export function DrawdownChart({ portfolioId }: DrawdownChartProps) {
                         <XAxis dataKey="date" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
                         <YAxis tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
                         <Tooltip
-                            formatter={(value: number) => [`${value.toFixed(2)}%`, 'Drawdown']}
+                            formatter={(value: number | undefined) => value ? [`${value.toFixed(2)}%`, 'Drawdown'] : ['0%', 'Drawdown']}
                             contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
                         />
                         <Line type="monotone" dataKey="value" stroke="#ef4444" strokeWidth={2} dot={false} />

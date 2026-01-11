@@ -118,7 +118,7 @@ export function ProfitabilityChart({ transactions }: ProfitabilityChartProps) {
                         />
                         <Tooltip
                             contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-                            formatter={(value: number) => [`R$ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, 'Investido']}
+                            formatter={(value: number | undefined) => value ? [`R$ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, 'Investido'] : ['R$ 0,00', 'Investido']}
                         />
                         <Area
                             type="monotone"
