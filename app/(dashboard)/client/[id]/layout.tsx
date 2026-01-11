@@ -9,9 +9,9 @@ export default async function ClientLayout({
 }) {
     const { id } = await params;
 
-    // In a real app, fetch client name by ID using params.id
-    // For MVP, we mock "Arnaldo Lunardi"
-    const clientName = "Arnaldo Lunardi";
+    // Fetch real portfolio name from database
+    const portfolio = await getPortfolioSummary(id);
+    const clientName = portfolio?.name || 'Cliente';
 
     return (
         <div className="flex flex-col animate-in fade-in duration-500">

@@ -18,12 +18,7 @@ export default function LandingPage() {
                         priority
                     />
                 </div>
-                <div className="flex gap-4">
-                    <Link href="/login">
-                        <Button variant="ghost" className="text-slate-300 hover:text-white hover:bg-white/10">
-                            Entrar
-                        </Button>
-                    </Link>
+                <div className="flex items-center gap-4">
                     <Link href="/login">
                         <Button className="bg-[#fcbf18] hover:bg-[#e5ad15] text-slate-900 font-semibold">
                             Começar Agora

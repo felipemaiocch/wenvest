@@ -41,7 +41,7 @@ export default async function ProfilePage() {
                             {user.user_metadata?.full_name || user.email?.split('@')[0]}
                         </h2>
                         <span className="text-sm text-muted-foreground mb-4">Advisor</span>
-                        <Badge variant="secondary" className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100">
+                        <Badge variant="secondary" className="bg-[#fcbf18]/10 text-[#fcbf18] hover:bg-[#fcbf18]/20">
                             Conta Ativa
                         </Badge>
                     </CardContent>

@@ -48,7 +48,7 @@ export default async function ClientSummaryPage({ params }: { params: Promise<{ 
                         </Button>
                     </Link>
                     <Link href={`/client/${id}/add`}>
-                        <Button className="gap-2 bg-emerald-500 hover:bg-emerald-600">
+                        <Button className="gap-2 bg-[#fcbf18] hover:bg-[#e5ad15] text-slate-900">
                             <Plus size={16} />
                             Novo Aporte
                         </Button>
