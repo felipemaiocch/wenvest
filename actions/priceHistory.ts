@@ -32,7 +32,7 @@ export async function fetchAndStoreHistoricalPrices(ticker: string, days: number
         const data = await response.json();
         const result = data.results?.[0];
 
-        if (!result || !result.histor​icalDataPrice) {
+        if (!result || !result.historicalDataPrice) {
             console.log(`No historical data for ${ticker}`);
             return { success: false, error: 'No data available' };
         }
