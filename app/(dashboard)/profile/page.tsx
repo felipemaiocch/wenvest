@@ -4,6 +4,8 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Mail, User, Calendar, Shield } from "lucide-react";
 
+export const dynamic = 'force-dynamic';
+
 export default async function ProfilePage() {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();

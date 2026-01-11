@@ -1,5 +1,7 @@
 import { AssetList } from "@/components/wallet/AssetList";
 
+export const dynamic = 'force-dynamic';
+
 export default function WalletPage() {
     return (
         <div className="flex flex-col h-full pt-6">
