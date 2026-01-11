@@ -123,14 +123,21 @@ export async function searchAssetUnified(query: string) {
         return null;
     }
 
-    // It's a ticker - use existing Brapi search
+    //It's a ticker - use existing Brapi search
     try {
-        const response = await fetch(
-            `https://brapi.dev/api/quote/${cleanQuery}`,
-            { next: { revalidate: 300 } }
-        );
+        const apiKey = process.env.BRAPI_API_KEY || '';
+        const url = apiKey
+            ? `https://brapi.dev/api/quote/${cleanQuery}?token=${apiKey}`
+            : `https://brapi.dev/api/quote/${cleanQuery}`;
 
-        if (!response.ok) return null;
+        const response = await fetch(url, {
+            next: { revalidate: 300 }
+        });
+
+        if (!response.ok) {
+            console.error(`Brapi error for ${cleanQuery}:`, response.status);
+            return null;
+        }
 
         const data = await response.json();
         const result = data.results?.[0];
@@ -138,11 +145,13 @@ export async function searchAssetUnified(query: string) {
         if (result) {
             return {
                 symbol: result.symbol,
-                name: result.longName || result.shortName,
+                name: result.longName || result.shortName || result.symbol,
                 type: result.type || 'STOCK',
                 price: result.regularMarketPrice
             };
         }
+
+        console.log(`No results found for ticker: ${cleanQuery}`);
     } catch (error) {
         console.error('Error searching asset:', error);
     }
