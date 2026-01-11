@@ -2,14 +2,25 @@
 -- Cole este script no Supabase SQL Editor e clique em RUN
 
 -- 1. Criar um portfolio de exemplo
-INSERT INTO portfolios (id, user_id, name, type, created_at)
-VALUES (
-  '00000000-0000-0000-0000-000000000001'::uuid,
-  auth.uid(),
-  'Carteira Principal',
-  'Pessoal',
-  NOW()
-) ON CONFLICT (id) DO NOTHING;
+-- Primeiro, vamos pegar um user_id válido do sistema de autenticação
+DO $$
+DECLARE
+  v_user_id uuid;
+BEGIN
+  -- Pega o primeiro usuário autenticado
+  SELECT id INTO v_user_id FROM auth.users LIMIT 1;
+  
+  -- Se não tiver usuário, cria um portfolio com user_id null temporariamente
+  -- (você pode atualizar depois via interface)
+  INSERT INTO portfolios (id, user_id, name, type, created_at)
+  VALUES (
+    '00000000-0000-0000-0000-000000000001'::uuid,
+    COALESCE(v_user_id, '00000000-0000-0000-0000-000000000002'::uuid),
+    'Carteira Principal',
+    'Pessoal',
+    NOW()
+  ) ON CONFLICT (id) DO NOTHING;
+END $$;
 
 -- 2. Adicionar transações de exemplo
 INSERT INTO transactions (portfolio_id, ticker, type, date, qty, price, total, origin)
