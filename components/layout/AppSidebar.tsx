@@ -46,60 +46,59 @@ export function AppSidebar({ className }: { className?: string }) {
                     />
                 </div>
             </div>
-        </div>
 
-            {/* Main Navigation */ }
-    <ScrollArea className="flex-1 py-6 px-4">
-        <nav className="flex flex-col gap-2">
-            <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2 px-2">Principal</div>
-            {navItems.map((item) => (
-                <Link key={item.href} href={item.href}>
-                    <Button
-                        variant="ghost"
-                        className={cn(
-                            "w-full justify-start gap-3 font-medium h-10 transition-all duration-200",
-                            isActive(item.href)
-                                ? "bg-[#fcbf18]/10 text-[#fcbf18] hover:bg-[#fcbf18]/20 hover:text-[#fcbf18] border-l-2 border-[#fcbf18] rounded-l-none"
-                                : "hover:bg-[#1e293b]/50 hover:text-white border-l-2 border-transparent"
-                        )}
-                    >
-                        <item.icon size={20} strokeWidth={isActive(item.href) ? 2.5 : 2} />
-                        {item.label}
-                    </Button>
-                </Link>
-            ))}
+            {/* Main Navigation */}
+            <ScrollArea className="flex-1 py-6 px-4">
+                <nav className="flex flex-col gap-2">
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-2 px-2">Principal</div>
+                    {navItems.map((item) => (
+                        <Link key={item.href} href={item.href}>
+                            <Button
+                                variant="ghost"
+                                className={cn(
+                                    "w-full justify-start gap-3 font-medium h-10 transition-all duration-200",
+                                    isActive(item.href)
+                                        ? "bg-[#fcbf18]/10 text-[#fcbf18] hover:bg-[#fcbf18]/20 hover:text-[#fcbf18] border-l-2 border-[#fcbf18] rounded-l-none"
+                                        : "hover:bg-[#1e293b]/50 hover:text-white border-l-2 border-transparent"
+                                )}
+                            >
+                                <item.icon size={20} strokeWidth={isActive(item.href) ? 2.5 : 2} />
+                                {item.label}
+                            </Button>
+                        </Link>
+                    ))}
 
-            <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mt-6 mb-2 px-2">Conta</div>
-            {secondaryItems.map((item) => (
-                <Link key={item.href} href={item.href}>
-                    <Button
-                        variant="ghost"
-                        className={cn(
-                            "w-full justify-start gap-3 font-medium h-10 transition-all duration-200",
-                            isActive(item.href)
-                                ? "bg-[#fcbf18]/10 text-[#fcbf18]"
-                                : "hover:bg-[#1e293b]/50 hover:text-white"
-                        )}
-                    >
-                        <item.icon size={20} />
-                        {item.label}
-                    </Button>
-                </Link>
-            ))}
-        </nav>
-    </ScrollArea>
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mt-6 mb-2 px-2">Conta</div>
+                    {secondaryItems.map((item) => (
+                        <Link key={item.href} href={item.href}>
+                            <Button
+                                variant="ghost"
+                                className={cn(
+                                    "w-full justify-start gap-3 font-medium h-10 transition-all duration-200",
+                                    isActive(item.href)
+                                        ? "bg-[#fcbf18]/10 text-[#fcbf18]"
+                                        : "hover:bg-[#1e293b]/50 hover:text-white"
+                                )}
+                            >
+                                <item.icon size={20} />
+                                {item.label}
+                            </Button>
+                        </Link>
+                    ))}
+                </nav>
+            </ScrollArea>
 
-    {/* Footer / Logout */ }
-    <div className="p-4 border-t border-[#1e293b]">
-        <Button
-            variant="ghost"
-            className="w-full justify-start gap-3 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10"
-            onClick={handleLogout}
-        >
-            <LogOut size={20} />
-            Sair
-        </Button>
-    </div>
+            {/* Footer / Logout */}
+            <div className="p-4 border-t border-[#1e293b]">
+                <Button
+                    variant="ghost"
+                    className="w-full justify-start gap-3 text-rose-400 hover:text-rose-300 hover:bg-rose-500/10"
+                    onClick={handleLogout}
+                >
+                    <LogOut size={20} />
+                    Sair
+                </Button>
+            </div>
         </aside >
     );
 }
