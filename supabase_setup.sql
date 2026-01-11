@@ -97,3 +97,67 @@ using (
         and portfolios.user_id = auth.uid()
     )
 );
+
+-- 3. Create price_history table for historical price data
+create table if not exists price_history (
+    id uuid primary key default uuid_generate_v4(),
+    ticker text not null,
+    date date not null,
+    open numeric,
+    high numeric,
+    low numeric,
+    close numeric not null,
+    volume bigint,
+    created_at timestamp with time zone default timezone('utc'::text, now()) not null,
+    unique(ticker, date)
+);
+
+-- Create index for faster queries
+create index if not exists idx_price_history_ticker_date on price_history(ticker, date desc);
+create index if not exists idx_price_history_date on price_history(date desc);
+
+-- Enable RLS on price_history (public read access)
+alter table price_history enable row level security;
+
+drop policy if exists "Anyone can view price history" on price_history;
+create policy "Anyone can view price history"
+on price_history for select
+using (true);
+
+-- 4. Create dividends table for future dividend tracking
+create table if not exists dividends (
+    id uuid primary key default uuid_generate_v4(),
+    portfolio_id uuid not null references portfolios(id) on delete cascade,
+    ticker text not null,
+    ex_date date not null,
+    payment_date date,
+    amount numeric not null,
+    quantity numeric not null,
+    total numeric not null,
+    created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- Enable RLS on dividends
+alter table dividends enable row level security;
+
+drop policy if exists "Users can view their own dividends" on dividends;
+create policy "Users can view their own dividends"
+on dividends for select
+using (
+    exists (
+        select 1 from portfolios
+        where portfolios.id = dividends.portfolio_id
+        and portfolios.user_id = auth.uid()
+    )
+);
+
+drop policy if exists "Users can insert their own dividends" on dividends;
+create policy "Users can insert their own dividends"
+on dividends for insert
+with check (
+    exists (
+        select 1 from portfolios
+        where portfolios.id = dividends.portfolio_id
+        and portfolios.user_id = auth.uid()
+    )
+);
