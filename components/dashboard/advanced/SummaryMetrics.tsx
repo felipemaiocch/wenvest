@@ -5,18 +5,18 @@ import { ArrowUpRight, ArrowDownRight, DollarSign, Wallet, PiggyBank, TrendingUp
 import { cn } from "@/lib/utils";
 
 interface SummaryMetricsProps {
-    netWorth?: number;
-    variation?: number;
-    profit?: number;
+    currentValue: number;
+    totalVariation: number;
+    totalVariationValue?: number;
 }
 
-export function SummaryMetrics({ netWorth = 0, variation = 0, profit = 0 }: SummaryMetricsProps) {
-    const isPositive = variation >= 0;
+export function SummaryMetrics({ currentValue, totalVariation, totalVariationValue }: SummaryMetricsProps) {
+    const isPositive = totalVariation >= 0;
 
     const metrics = [
         {
             label: "Patrimônio Atual",
-            value: netWorth.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
+            value: currentValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
             icon: Wallet,
             color: "text-slate-600",
             bg: "bg-slate-100",

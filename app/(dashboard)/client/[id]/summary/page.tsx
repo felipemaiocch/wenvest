@@ -7,23 +7,28 @@ import { PerformanceIndicators } from '@/components/dashboard/advanced/Performan
 import { RiskReturnScatter } from '@/components/dashboard/advanced/RiskReturnScatter';
 import { DrawdownChart } from '@/components/dashboard/advanced/DrawdownChart';
 import { CorrelationMatrix } from '@/components/dashboard/advanced/CorrelationMatrix';
-import { getPortfolioSummary } from "@/actions/dashboard";
+import { getPortfolioSummary as getOldSummary } from "@/actions/dashboard";
+import { getPortfolioSummary } from "@/actions/portfolioSummary";
 
 export default async function ClientSummaryPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
-    const summary = await getPortfolioSummary(id);
 
-    // Transform summary assets for composition
-    // summary.assets is sorted by value desc
-    const assetsForDonut = summary.assets.map((a: any) => ({
+    // Get real-time summary with current prices
+    const realSummary = await getPortfolioSummary(id);
+
+    // Get old summary for composition data
+    const oldSummary = await getOldSummary(id);
+
+    // Transform old summary assets for composition
+    const assetsForDonut = oldSummary.assets.map((a: any) => ({
         name: a.ticker,
         value: a.currentValue,
-        color: '#10b981' // Simplification for MVP
+        color: '#10b981'
     }));
 
     // Group by type for specific donut
     const typeMap = new Map<string, number>();
-    summary.assets.forEach((a: any) => {
+    oldSummary.assets.forEach((a: any) => {
         const current = typeMap.get(a.type) || 0;
         typeMap.set(a.type, current + a.currentValue);
     });
@@ -38,32 +43,27 @@ export default async function ClientSummaryPage({ params }: { params: Promise<{ 
         <div className="flex flex-col gap-8 pb-10">
 
             {/* 0. Context Actions */}
-            <div className="flex justify-between items-center">
-                <h2 className="text-xl font-bold">Resumo da Carteira</h2>
-                <div className="flex gap-2">
-                    <Link href={`/client/${id}/transactions`}>
-                        <Button variant="outline" className="gap-2">
-                            <FileText size={16} />
-                            Ver Extrato
-                        </Button>
-                    </Link>
-                    <Link href={`/client/${id}/add`}>
-                        <Button className="gap-2 bg-[#fcbf18] hover:bg-[#e5ad15] text-slate-900">
-                            <Plus size={16} />
-                            Novo Aporte
-                        </Button>
-                    </Link>
-                </div>
+            <div className="flex items-center justify-end gap-2">
+                <Link href={`/client/${id}/transactions`}>
+                    <Button variant="outline" className="gap-2">
+                        <FileText size={16} />
+                        Ver Extrato
+                    </Button>
+                </Link>
+                <Link href={`/client/${id}/add`}>
+                    <Button className="gap-2 bg-[#fcbf18] hover:bg-[#e5ad15] text-slate-900">
+                        <Plus size={16} />
+                        Novo Aporte
+                    </Button>
+                </Link>
             </div>
 
-            {/* 1. Main Metrics Cards (Net Worth, Variation, etc.) */}
-            <section>
-                <SummaryMetrics
-                    netWorth={summary.netWorth}
-                    variation={summary.variation}
-                    profit={summary.profit}
-                />
-            </section>
+            {/* 1. Summary Metrics */}
+            <SummaryMetrics
+                currentValue={realSummary?.current_value || 0}
+                totalVariation={realSummary?.variation_percent || 0}
+                totalVariationValue={realSummary?.variation_value || 0}
+            />
 
             {/* 2. Key Performance Indicators */}
             <section>

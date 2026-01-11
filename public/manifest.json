@@ -1,10 +1,11 @@
 {
-  "name": "GlobalWealth Mobile",
-  "short_name": "GlobalWealth",
+  "name": "Wenvest",
+  "short_name": "Wenvest",
+  "description": "Plataforma completa para gestão e análise de investimentos",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#000000",
-  "theme_color": "#000000",
+  "background_color": "#0f172a",
+  "theme_color": "#fcbf18",
   "icons": [
     {
       "src": "/icon.png",
@@ -12,10 +13,9 @@
       "type": "image/png"
     },
     {
-      "src": "/icon.png",
+      "src": "/apple-icon.png",
       "sizes": "512x512",
       "type": "image/png"
     }
-  ],
-  "orientation": "portrait"
+  ]
 }
