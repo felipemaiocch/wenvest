@@ -23,7 +23,7 @@ export function DividendsByAsset({ transactions }: DividendsByAssetProps) {
         }, {} as Record<string, number>);
 
         const chartData = Object.entries(grouped)
-            .map(([name, value]) => ({ name, value }))
+            .map(([name, value]) => ({ name, value: value as number }))
             .sort((a, b) => b.value - a.value);
 
         return { data: chartData };
