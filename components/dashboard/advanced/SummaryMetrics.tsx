@@ -23,8 +23,8 @@ export function SummaryMetrics({ currentValue, totalVariation, totalVariationVal
         },
         {
             label: "Variação Total",
-            value: `${isPositive ? '+' : ''}${variation.toFixed(2)}%`,
-            subValue: profit.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }),
+            value: `${isPositive ? '+' : ''}${totalVariation.toFixed(2)}%`,
+            subValue: totalVariationValue ? totalVariationValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' }) : undefined,
             icon: isPositive ? TrendingUp : ArrowDownRight,
             color: isPositive ? "text-emerald-600" : "text-rose-600",
             bg: isPositive ? "bg-emerald-100" : "bg-rose-100",
