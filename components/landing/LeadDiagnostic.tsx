@@ -83,7 +83,7 @@ function drawRadar(doc: any, answers: Record<string, number>) {
     });
 
     doc.setDrawColor(252, 191, 24);
-    doc.setFillColor(252, 191, 24);
+    doc.setFillColor(252, 191, 24, 0.6);
     doc.setLineWidth(0.7);
     if (typeof (doc as any).polygon === 'function') {
         (doc as any).polygon(points, 'FD');
@@ -113,55 +113,63 @@ function bucketRecommendation(score: number) {
 
 function generatePdf(answers: Record<string, number>, lead: Lead, ai?: AiInsights) {
     const doc = new jsPDF();
+    // Header block
+    doc.setFillColor(12, 20, 40);
+    doc.rect(0, 0, 210, 36, 'F');
+    doc.setTextColor(252, 191, 24);
     doc.setFontSize(18);
-    doc.text('Diagnóstico Patrimonial', 20, 20);
+    doc.text('Diagnóstico Patrimonial - Wenvest', 20, 18);
+    doc.setTextColor(255, 255, 255);
     doc.setFontSize(12);
-    doc.text(`Nome: ${lead.name || '---'}`, 20, 30);
-    doc.text(`Email: ${lead.email || '---'}`, 20, 37);
-    doc.text(`Telefone: ${lead.phone || '---'}`, 20, 44);
-    doc.text('Resultados (maturidade):', 20, 58);
+    doc.text(`Nome: ${lead.name || '---'}`, 20, 26);
+    doc.text(`Email: ${lead.email || '---'}`, 80, 26);
+    doc.text(`Telefone: ${lead.phone || '---'}`, 150, 26);
 
-    let y = 68;
+    // Cards de resultados
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(12);
+    doc.text('Resumo de Maturidade', 20, 48);
+    let y = 56;
+    const avg = Object.values(answers).reduce((a, b) => a + b, 0) / QUESTIONS.length;
     QUESTIONS.forEach((q) => {
         const score = answers[q.id] ?? 0;
-        doc.text(`${q.area} - ${q.title}: ${score}/10`, 20, y);
-        y += 8;
+        doc.text(`• ${q.area}: ${score}/10`, 24, y);
+        y += 7;
     });
+    doc.text(`Média geral: ${avg.toFixed(1)}/10`, 24, y + 4);
 
-    const avg = Object.values(answers).reduce((a, b) => a + b, 0) / QUESTIONS.length;
-    doc.text(`Média geral: ${avg.toFixed(1)}/10`, 20, y + 4);
-
-    // Radar visual
+    // Radar visual ao lado
     drawRadar(doc, answers);
 
-    y = 180;
-    doc.setFontSize(12);
-    doc.text('Recomendações (IA + consultor):', 20, y);
-    y += 8;
-    if (ai?.summary) {
-        doc.setFontSize(11);
-        doc.text(`Resumo: ${ai.summary}`, 20, y); y += 8;
-    }
-    if (ai?.risks) {
-        doc.text(`Riscos: ${ai.risks}`, 20, y); y += 8;
-    }
-    if (ai?.opportunities) {
-        doc.text(`Oportunidades: ${ai.opportunities}`, 20, y); y += 8;
-    }
-
-    // Fallback ou detalhamento por área
+    // Bloco recomendações
+    let recY = 150;
+    doc.setFontSize(13);
+    doc.setTextColor(12, 20, 40);
+    doc.setFillColor(245, 249, 255);
+    doc.roundedRect(16, recY - 10, 178, 60, 3, 3, 'F');
+    doc.text('Recomendações (IA + consultor):', 20, recY);
+    recY += 8;
+    doc.setTextColor(33, 37, 41);
     doc.setFontSize(11);
-    QUESTIONS.forEach((q) => {
-        const score = answers[q.id] ?? 0;
-        const text = bucketRecommendation(score);
-        doc.text(`• ${q.area}: ${text}`, 20, y);
-        y += 8;
-    });
+    if (ai && (ai.summary || ai.risks || ai.opportunities)) {
+        if (ai.summary) { doc.text(`Resumo: ${ai.summary}`, 20, recY); recY += 7; }
+        if (ai.risks) { doc.text(`Riscos: ${ai.risks}`, 20, recY); recY += 7; }
+        if (ai.opportunities) { doc.text(`Oportunidades: ${ai.opportunities}`, 20, recY); recY += 7; }
+    } else {
+        QUESTIONS.forEach((q) => {
+            const score = answers[q.id] ?? 0;
+            const text = bucketRecommendation(score);
+            doc.text(`• ${q.area}: ${text}`, 20, recY);
+            recY += 7;
+        });
+    }
 
-    y += 6;
-    doc.setFontSize(12);
-    doc.text('Próximos passos com a Wenvest:', 20, y);
-    y += 8;
+    // Próximos passos
+    recY += 8;
+    doc.setFontSize(13);
+    doc.setTextColor(12, 20, 40);
+    doc.text('Próximos passos com a Wenvest:', 20, recY);
+    recY += 7;
     doc.setFontSize(11);
     const steps = ai?.next_steps && ai.next_steps.length ? ai.next_steps : [
         'Ajustar alocação BR/US e classes para risco-retorno ótimo.',
@@ -169,8 +177,8 @@ function generatePdf(answers: Record<string, number>, lead: Lead, ai?: AiInsight
         'Revisar custos/impostos e mapear oportunidades globais.',
     ];
     steps.forEach((s, idx) => {
-        doc.text(`${idx + 1}) ${s}`, 20, y);
-        y += 6;
+        doc.text(`${idx + 1}) ${s}`, 20, recY);
+        recY += 6;
     });
 
     doc.save('diagnostico-wenvest.pdf');
@@ -200,24 +208,31 @@ export function LeadDiagnostic() {
     const handleSubmitLead = async () => {
         setLoadingAi(true);
         try {
-            const resp = await fetch('/api/diagnostic', {
+            let insights: AiInsights | null = null;
+            try {
+                const resp = await fetch('/api/diagnostic', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ lead, answers }),
+                });
+                if (resp.ok) {
+                    const data = await resp.json();
+                    insights = data.insights;
+                    setAiInsights(data.insights);
+                }
+            } catch (err) {
+                // ignore, fallback
+            }
+
+            // Save lead (best effort)
+            fetch('/api/lead', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ lead, answers }),
-            });
+                body: JSON.stringify({ lead, answers, ai: insights }),
+            }).catch(() => {});
 
-            if (resp.ok) {
-                const data = await resp.json();
-                setAiInsights(data.insights);
-                setSent(true);
-                generatePdf(answers, lead, data.insights);
-            } else {
-                setSent(true);
-                generatePdf(answers, lead);
-            }
-        } catch (e) {
             setSent(true);
-            generatePdf(answers, lead);
+            generatePdf(answers, lead, insights || undefined);
         } finally {
             setLoadingAi(false);
         }
@@ -320,8 +335,7 @@ export function LeadDiagnostic() {
                                 PDF baixado. Entraremos em contato para discutir um plano sob medida.
                             </p>
                             <Button
-                                variant="outline"
-                                className="border-white/20 text-white hover:bg-white/10"
+                                className="bg-[#fcbf18] hover:bg-[#e5ad15] text-slate-900 font-semibold px-6 h-11 shadow-lg shadow-[#fcbf18]/30"
                                 onClick={() => generatePdf(answers, lead, aiInsights || undefined)}
                             >
                                 Baixar novamente
