@@ -41,7 +41,7 @@ Use verbos de ação e cite BR/US/eficiência fiscal/riscos onde fizer sentido.`
                 Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
             },
             body: JSON.stringify({
-                model: 'gpt-oss-120b',
+                model: 'llama-3.3-70b',
                 messages: [
                     { role: 'system', content: 'Você é um consultor financeiro que responde em português brasileiro.' },
                     { role: 'user', content: prompt },
@@ -53,7 +53,7 @@ Use verbos de ação e cite BR/US/eficiência fiscal/riscos onde fizer sentido.`
         if (!groqResp.ok) {
             const text = await groqResp.text();
             console.error('Groq error', groqResp.status, text);
-            return NextResponse.json({ error: 'Groq request failed' }, { status: 500 });
+            return NextResponse.json({ error: 'Groq request failed', details: text }, { status: 500 });
         }
 
         const data = await groqResp.json();
