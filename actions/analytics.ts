@@ -351,3 +351,9 @@ export async function calculateRiskReturn(portfolioId: string) {
         return null;
     }
 }
+
+// Mantido apenas para compatibilidade: componente de correlação foi removido,
+// mas exportamos um stub para não quebrar o build se ainda houver import.
+export async function calculateCorrelationMatrix(_portfolioId: string) {
+    return null;
+}
