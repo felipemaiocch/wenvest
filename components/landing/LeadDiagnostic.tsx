@@ -44,12 +44,13 @@ type AiInsights = {
     risks?: string;
     opportunities?: string;
     next_steps?: string[];
+    cta?: string;
 };
 
 function drawRadar(doc: any, answers: Record<string, number>) {
-    const cx = 155;
+    const cx = 150;
     const cy = 125;
-    const radius = 42;
+    const radius = 32;
     const axes = QUESTIONS;
     const step = (Math.PI * 2) / axes.length;
 
@@ -180,6 +181,16 @@ function generatePdf(answers: Record<string, number>, lead: Lead, ai?: AiInsight
         doc.text(`${idx + 1}) ${s}`, 20, recY);
         recY += 6;
     });
+
+    // CTA
+    recY += 10;
+    doc.setFontSize(12);
+    doc.setTextColor(12, 20, 40);
+    doc.text('Por que falar com a Wenvest agora:', 20, recY);
+    recY += 7;
+    doc.setFontSize(11);
+    const ctaText = ai?.cta || 'Unificamos BR/US, calibramos risco e impostos e entregamos acompanhamento ativo do seu patrimônio.';
+    doc.text(`• ${ctaText}`, 20, recY);
 
     doc.save('diagnostico-wenvest.pdf');
 }

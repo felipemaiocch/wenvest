@@ -10,7 +10,7 @@ export async function POST(request: Request) {
         }
 
         const prompt = `
-Você é um consultor patrimonial da Wenvest. Gere recomendações concisas em português, formato JSON.
+Você é um consultor patrimonial da Wenvest. Responda em português BR com recomendações específicas, focando em como a Wenvest resolve os pontos fracos. Seja direto, nada genérico. Retorne APENAS JSON válido, sem texto fora do JSON.
 
 Dados do lead:
 Nome: ${lead?.name || 'N/A'}
@@ -24,15 +24,15 @@ Notas (1-10, 3/6/9):
 - Objetivos: ${answers?.goals || 0}
 - Fiscal: ${answers?.tax || 0}
 
-Retorne JSON com:
+Formato de saída (JSON):
 {
- "summary": "1-2 frases do estado geral",
- "risks": "1-2 frases de riscos ou lacunas",
- "opportunities": "1-2 frases de ganhos ao contratar a Wenvest",
- "next_steps": ["passo 1","passo 2","passo 3"]
+ "summary": "2 frases sobre a situação atual, citando lacunas e prioridade",
+ "risks": "2 frases sobre riscos reais ou perdas potenciais se nada for feito",
+ "opportunities": "2 frases sobre ganhos ao contratar a Wenvest (ex: diversificação global, eficiência fiscal, rebalanceamento)",
+ "next_steps": ["passo 1", "passo 2", "passo 3"],
+ "cta": "1 frase convidando a falar com a Wenvest para resolver"
 }
-Não inclua nada fora do JSON.
-`;
+Use verbos de ação e cite BR/US/eficiência fiscal/riscos onde fizer sentido.`;
 
         const groqResp = await fetch('https://api.groq.com/openai/v1/chat/completions', {
             method: 'POST',
