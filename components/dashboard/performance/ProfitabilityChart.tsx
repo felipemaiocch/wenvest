@@ -123,7 +123,7 @@ export function ProfitabilityChart({ performance }: ProfitabilityChartProps) {
                                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                                     <XAxis dataKey="date" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
                         <YAxis tick={{ fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={(v) => `${v}%`} />
-                        <Tooltip formatter={(v?: number) => [`${(v ?? 0).toFixed(2)}%`, 'Rentabilidade']} />
+                        <Tooltip formatter={(v?: number) => [`${(v ?? 0).toFixed(2)}%`, 'Rentabilidade'] as [string, string]} />
                                     <Bar dataKey="ret" fill="#0ea5e9" radius={[4, 4, 0, 0]} />
                                 </BarChart>
                             </ResponsiveContainer>
@@ -142,7 +142,7 @@ export function ProfitabilityChart({ performance }: ProfitabilityChartProps) {
                                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                                     <XAxis dataKey="date" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
                                     <YAxis tick={{ fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={(v) => `${v}%`} />
-                                    <Tooltip formatter={(v: number) => [`${(v || 0).toFixed(2)}%`, 'Rentabilidade']} />
+                                    <Tooltip formatter={(v?: number) => [`${(v ?? 0).toFixed(2)}%`, 'Rentabilidade'] as [string, string]} />
                                     <Bar dataKey="ret" fill="#f59e0b" radius={[4, 4, 0, 0]} />
                                 </BarChart>
                             </ResponsiveContainer>
