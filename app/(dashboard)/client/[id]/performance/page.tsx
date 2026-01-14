@@ -2,8 +2,8 @@ import { getPortfolioPerformance } from "@/actions/portfolioSummary";
 import { ProfitabilityChart } from "@/components/dashboard/performance/ProfitabilityChart";
 import { Info } from "lucide-react";
 
-export default async function PerformancePage({ params }: { params: Promise<{ id: string }> }) {
-    const { id } = await params;
+export default async function PerformancePage({ params }: { params: { id: string } }) {
+    const { id } = params;
     let performance: any[] = [];
     try {
         performance = await getPortfolioPerformance(id);
