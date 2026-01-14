@@ -10,7 +10,7 @@ export async function POST(request: Request) {
         }
 
         const prompt = `
-Você é um consultor patrimonial da Wenvest. Responda em português BR, de forma concisa e estruturada, sem floreios. A saída deve ser APENAS JSON válido, sem texto fora do JSON.
+Você é um consultor patrimonial da Wenvest. Responda em português BR, direto, com ênfase em ações e riscos reais. A saída deve ser APENAS JSON válido, sem texto fora do JSON.
 
 Dados do lead:
 Nome: ${lead?.name || 'N/A'}
@@ -26,16 +26,16 @@ Notas (1-10, 3/6/9):
 
 Formato de saída (JSON):
 {
- "summary": "2 frases sobre a situação atual, citando lacunas e prioridade",
- "risks": "2 frases sobre riscos reais ou perdas potenciais se nada for feito",
- "opportunities": "2 frases sobre ganhos ao contratar a Wenvest (ex: diversificação global, eficiência fiscal, rebalanceamento)",
- "next_steps": ["passo 1", "passo 2", "passo 3"],
- "cta": "1 frase convidando a falar com a Wenvest para resolver",
+ "summary": "2-3 frases sobre situação atual, lacunas críticas e prioridade de atuação",
+ "risks": "3 bullets sobre riscos reais se nada for feito (ex: perdas por concentração, falta de liquidez, ineficiência fiscal)",
+ "opportunities": "3 bullets sobre ganhos ao contratar a Wenvest (diversificação BR/US, eficiência fiscal, rebalanceamento assistido)",
+ "next_steps": ["passo 1", "passo 2", "passo 3", "passo 4"],
+ "cta": "1 frase chamando para falar com a Wenvest agora",
  "swot": {
-   "strengths": ["força1","força2"],
-   "weaknesses": ["fraqueza1","fraqueza2"],
-   "opportunities_detail": ["oportunidade1","oportunidade2"],
-   "threats": ["ameaça1","ameaça2"]
+   "strengths": ["força1","força2","força3"],
+   "weaknesses": ["fraqueza1","fraqueza2","fraqueza3"],
+   "opportunities_detail": ["oportunidade1","oportunidade2","oportunidade3"],
+   "threats": ["ameaça1","ameaça2","ameaça3"]
  }
 }
 Use verbos de ação e cite BR/US/eficiência fiscal/riscos onde fizer sentido.`;
