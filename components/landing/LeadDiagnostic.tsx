@@ -47,14 +47,14 @@ type AiInsights = {
 };
 
 function drawRadar(doc: any, answers: Record<string, number>) {
-    const cx = 160;
-    const cy = 120;
+    const cx = 155;
+    const cy = 125;
     const radius = 42;
     const axes = QUESTIONS;
     const step = (Math.PI * 2) / axes.length;
 
     // grade concêntrica
-    doc.setDrawColor(180);
+    doc.setDrawColor(210);
     doc.setLineWidth(0.2);
     [0.3, 0.6, 1].forEach((r) => {
         doc.circle(cx, cy, radius * r, 'S');
@@ -66,10 +66,10 @@ function drawRadar(doc: any, answers: Record<string, number>) {
         const x = cx + radius * Math.cos(angle);
         const y = cy + radius * Math.sin(angle);
         doc.line(cx, cy, x, y);
-        const labelX = cx + (radius + 10) * Math.cos(angle);
-        const labelY = cy + (radius + 10) * Math.sin(angle);
-        doc.setFontSize(9);
-        doc.text(axis.area, labelX - 10, labelY);
+        const labelX = cx + (radius + 12) * Math.cos(angle);
+        const labelY = cy + (radius + 12) * Math.sin(angle);
+        doc.setFontSize(8);
+        doc.text(axis.area, labelX - 8, labelY);
     });
 
     // polígono da pontuação
@@ -83,8 +83,8 @@ function drawRadar(doc: any, answers: Record<string, number>) {
     });
 
     doc.setDrawColor(252, 191, 24);
-    doc.setFillColor(252, 191, 24, 0.6);
-    doc.setLineWidth(0.7);
+    doc.setFillColor(252, 191, 24, 0.35);
+    doc.setLineWidth(0.9);
     if (typeof (doc as any).polygon === 'function') {
         (doc as any).polygon(points, 'FD');
     } else {
