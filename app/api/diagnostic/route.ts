@@ -41,7 +41,8 @@ Use verbos de ação e cite BR/US/eficiência fiscal/riscos onde fizer sentido.`
                 Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
             },
             body: JSON.stringify({
-                model: 'llama-3.3-70b',
+                model: 'llama-3.3-70b-versatile',
+                response_format: { type: 'json_object' },
                 messages: [
                     { role: 'system', content: 'Você é um consultor financeiro que responde em português brasileiro.' },
                     { role: 'user', content: prompt },
@@ -53,7 +54,22 @@ Use verbos de ação e cite BR/US/eficiência fiscal/riscos onde fizer sentido.`
         if (!groqResp.ok) {
             const text = await groqResp.text();
             console.error('Groq error', groqResp.status, text);
-            return NextResponse.json({ error: 'Groq request failed', details: text }, { status: 500 });
+            // devolve fallback sem estourar 500
+            return NextResponse.json({
+                error: 'Groq request failed',
+                details: text,
+                insights: {
+                    summary: 'Estrutura parcial identificada; priorizar alocação, risco e liquidez.',
+                    risks: 'Risco de perdas por falta de diversificação e controles de drawdown/liquidez.',
+                    opportunities: 'Melhorar alocação BR/US, eficiência fiscal e acompanhamento ativo com a Wenvest.',
+                    next_steps: [
+                        'Rebalancear BR/US e classes para otimizar risco-retorno.',
+                        'Implementar limites de risco, liquidez e metas por prazo.',
+                        'Revisar custos/impostos e mapear oportunidades globais.'
+                    ],
+                    cta: 'Fale com a Wenvest para organizar risco, impostos e crescimento do seu patrimônio.'
+                }
+            }, { status: 200 });
         }
 
         const data = await groqResp.json();
@@ -67,7 +83,6 @@ Use verbos de ação e cite BR/US/eficiência fiscal/riscos onde fizer sentido.`
         try {
             parsed = JSON.parse(content);
         } catch {
-            // fallback: attempt to extract JSON substring
             const match = content.match(/\{[\s\S]*\}/);
             if (match) {
                 parsed = JSON.parse(match[0]);
@@ -75,12 +90,39 @@ Use verbos de ação e cite BR/US/eficiência fiscal/riscos onde fizer sentido.`
         }
 
         if (!parsed) {
-            return NextResponse.json({ error: 'Parse failed', raw: content }, { status: 500 });
+            return NextResponse.json({
+                error: 'Parse failed',
+                raw: content,
+                insights: {
+                    summary: 'Estrutura parcial; precisamos ajustar risco e liquidez.',
+                    risks: 'Sem controles claros de risco e liquidez, há risco de perdas e falta de caixa.',
+                    opportunities: 'Diversificar BR/US, otimizar impostos e acompanhar metas com a Wenvest.',
+                    next_steps: [
+                        'Rebalancear BR/US e classes para risco-retorno ótimo.',
+                        'Implementar limites de risco, liquidez e metas por prazo.',
+                        'Revisar custos/impostos e mapear oportunidades globais.'
+                    ],
+                    cta: 'Converse com a Wenvest para estruturar risco, liquidez e crescimento do patrimônio.'
+                }
+            }, { status: 200 });
         }
 
         return NextResponse.json({ insights: parsed });
     } catch (error: any) {
         console.error('diagnostic error', error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        return NextResponse.json({
+            error: error.message,
+            insights: {
+                summary: 'Falha ao gerar IA; use recomendações padrão.',
+                risks: 'Riscos de diversificação, liquidez e falta de metas claras.',
+                opportunities: 'Wenvest ajuda com rebalanceamento, eficiência fiscal e acompanhamento ativo.',
+                next_steps: [
+                    'Ajustar alocação BR/US e classes.',
+                    'Implementar controles de risco, liquidez e metas.',
+                    'Revisar custos/impostos e oportunidades globais.'
+                ],
+                cta: 'Fale com a Wenvest para estruturar seu patrimônio.'
+            }
+        }, { status: 200 });
     }
 }
