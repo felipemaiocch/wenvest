@@ -126,7 +126,7 @@ function generatePdf(answers: Record<string, number>, lead: Lead, ai?: AiInsight
     doc.text(`Email: ${lead.email || '---'}`, 80, 26);
     doc.text(`Telefone: ${lead.phone || '---'}`, 150, 26);
 
-    // Cards de resultados
+    // Cards de resultados + radar lado a lado
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(12);
     doc.text('Resumo de Maturidade', 20, 48);
@@ -139,15 +139,15 @@ function generatePdf(answers: Record<string, number>, lead: Lead, ai?: AiInsight
     });
     doc.text(`Média geral: ${avg.toFixed(1)}/10`, 24, y + 4);
 
-    // Radar visual ao lado
+    // Radar visual ao lado (centralizado verticalmente)
     drawRadar(doc, answers);
 
-    // Bloco recomendações
+    // Bloco recomendações + próximos passos + CTA em um cartão maior
     let recY = 150;
     doc.setFontSize(13);
     doc.setTextColor(12, 20, 40);
     doc.setFillColor(245, 249, 255);
-    doc.roundedRect(16, recY - 10, 178, 60, 3, 3, 'F');
+    doc.roundedRect(16, recY - 12, 178, 70, 3, 3, 'F');
     doc.text('Recomendações (IA + consultor):', 20, recY);
     recY += 8;
     doc.setTextColor(33, 37, 41);
@@ -165,7 +165,6 @@ function generatePdf(answers: Record<string, number>, lead: Lead, ai?: AiInsight
         });
     }
 
-    // Próximos passos
     recY += 8;
     doc.setFontSize(13);
     doc.setTextColor(12, 20, 40);
@@ -182,8 +181,7 @@ function generatePdf(answers: Record<string, number>, lead: Lead, ai?: AiInsight
         recY += 6;
     });
 
-    // CTA
-    recY += 10;
+    recY += 8;
     doc.setFontSize(12);
     doc.setTextColor(12, 20, 40);
     doc.text('Por que falar com a Wenvest agora:', 20, recY);
