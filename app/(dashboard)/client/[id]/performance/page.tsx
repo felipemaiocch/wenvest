@@ -4,7 +4,13 @@ import { Info } from "lucide-react";
 
 export default async function PerformancePage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
-    const performance = await getPortfolioPerformance(id);
+    let performance: any[] = [];
+    try {
+        performance = await getPortfolioPerformance(id);
+    } catch (err) {
+        console.error('Performance load error', err);
+        performance = [];
+    }
 
     return (
         <div className="flex flex-col gap-8 pb-10 max-w-4xl">
