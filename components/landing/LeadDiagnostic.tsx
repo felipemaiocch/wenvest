@@ -147,11 +147,12 @@ function generatePdf(answers: Record<string, number>, lead: Lead, ai?: AiInsight
     // Mini insight
     const insight = ai?.summary || 'Síntese automática a partir das respostas. Sugerimos uma conversa rápida para aprofundar.';
     doc.setFontSize(11);
-    doc.text('Principais achados:', margin + 80, y + 14);
     const oldY = y;
-    y = y + 20;
+    const textStartY = y + 36; // joga o texto para baixo da badge
+    doc.text('Principais achados:', margin + 80, textStartY);
+    y = textStartY + 6;
     wrap(insight, margin + 80, 210 - margin * 2 - 80);
-    y = Math.max(y + 4, oldY + 52);
+    y = Math.max(y + 4, oldY + 60);
 
     // Pontuação por pilar (barras)
     ensureSpace(60);
