@@ -41,7 +41,7 @@ Use verbos de ação e cite BR/US/eficiência fiscal/riscos onde fizer sentido.`
                 Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
             },
             body: JSON.stringify({
-                model: 'llama3-8b-8192',
+                model: 'gpt-oss-20b',
                 messages: [
                     { role: 'system', content: 'Você é um consultor financeiro que responde em português brasileiro.' },
                     { role: 'user', content: prompt },
