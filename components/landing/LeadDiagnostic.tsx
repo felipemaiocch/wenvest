@@ -50,7 +50,7 @@ type AiInsights = {
 function drawRadar(doc: any, answers: Record<string, number>) {
     const cx = 150;
     const cy = 125;
-    const radius = 32;
+    const radius = 38;
     const axes = QUESTIONS;
     const step = (Math.PI * 2) / axes.length;
 
@@ -84,7 +84,7 @@ function drawRadar(doc: any, answers: Record<string, number>) {
     });
 
     doc.setDrawColor(252, 191, 24);
-    doc.setFillColor(252, 191, 24, 0.35);
+    doc.setFillColor(252, 191, 24, 0.45);
     doc.setLineWidth(0.9);
     if (typeof (doc as any).polygon === 'function') {
         (doc as any).polygon(points, 'FD');
