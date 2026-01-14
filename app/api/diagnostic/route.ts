@@ -10,7 +10,7 @@ export async function POST(request: Request) {
         }
 
         const prompt = `
-Você é um consultor patrimonial da Wenvest. Responda em português BR com recomendações específicas, focando em como a Wenvest resolve os pontos fracos. Seja direto, nada genérico. Retorne APENAS JSON válido, sem texto fora do JSON.
+Você é um consultor patrimonial da Wenvest. Responda em português BR, de forma concisa e estruturada, sem floreios. A saída deve ser APENAS JSON válido, sem texto fora do JSON.
 
 Dados do lead:
 Nome: ${lead?.name || 'N/A'}
@@ -30,7 +30,13 @@ Formato de saída (JSON):
  "risks": "2 frases sobre riscos reais ou perdas potenciais se nada for feito",
  "opportunities": "2 frases sobre ganhos ao contratar a Wenvest (ex: diversificação global, eficiência fiscal, rebalanceamento)",
  "next_steps": ["passo 1", "passo 2", "passo 3"],
- "cta": "1 frase convidando a falar com a Wenvest para resolver"
+ "cta": "1 frase convidando a falar com a Wenvest para resolver",
+ "swot": {
+   "strengths": ["força1","força2"],
+   "weaknesses": ["fraqueza1","fraqueza2"],
+   "opportunities_detail": ["oportunidade1","oportunidade2"],
+   "threats": ["ameaça1","ameaça2"]
+ }
 }
 Use verbos de ação e cite BR/US/eficiência fiscal/riscos onde fizer sentido.`;
 
@@ -55,21 +61,27 @@ Use verbos de ação e cite BR/US/eficiência fiscal/riscos onde fizer sentido.`
             const text = await groqResp.text();
             console.error('Groq error', groqResp.status, text);
             // devolve fallback sem estourar 500
-            return NextResponse.json({
-                error: 'Groq request failed',
-                details: text,
-                insights: {
-                    summary: 'Estrutura parcial identificada; priorizar alocação, risco e liquidez.',
-                    risks: 'Risco de perdas por falta de diversificação e controles de drawdown/liquidez.',
-                    opportunities: 'Melhorar alocação BR/US, eficiência fiscal e acompanhamento ativo com a Wenvest.',
-                    next_steps: [
-                        'Rebalancear BR/US e classes para otimizar risco-retorno.',
-                        'Implementar limites de risco, liquidez e metas por prazo.',
-                        'Revisar custos/impostos e mapear oportunidades globais.'
-                    ],
-                    cta: 'Fale com a Wenvest para organizar risco, impostos e crescimento do seu patrimônio.'
+        return NextResponse.json({
+            error: 'Groq request failed',
+            details: text,
+            insights: {
+                summary: 'Estrutura parcial identificada; priorizar alocação, risco e liquidez.',
+                risks: 'Risco de perdas por falta de diversificação e controles de drawdown/liquidez.',
+                opportunities: 'Melhorar alocação BR/US, eficiência fiscal e acompanhamento ativo com a Wenvest.',
+                next_steps: [
+                    'Rebalancear BR/US e classes para otimizar risco-retorno.',
+                    'Implementar limites de risco, liquidez e metas por prazo.',
+                    'Revisar custos/impostos e mapear oportunidades globais.'
+                ],
+                cta: 'Fale com a Wenvest para organizar risco, impostos e crescimento do seu patrimônio.',
+                swot: {
+                    strengths: ['Diversificação pode ser ampliada', 'Potencial de eficiência fiscal'],
+                    weaknesses: ['Controle de risco/liquidez fraco', 'Metas pouco claras'],
+                    opportunities_detail: ['Rebalancear BR/US', 'Monitorar drawdown e impostos'],
+                    threats: ['Volatilidade sem proteção', 'Impostos erodindo retorno']
                 }
-            }, { status: 200 });
+            }
+        }, { status: 200 });
         }
 
         const data = await groqResp.json();

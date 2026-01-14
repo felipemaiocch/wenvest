@@ -45,66 +45,16 @@ type AiInsights = {
     opportunities?: string;
     next_steps?: string[];
     cta?: string;
+    swot?: {
+        strengths?: string[];
+        weaknesses?: string[];
+        opportunities_detail?: string[];
+        threats?: string[];
+    }
 };
 
-function drawRadar(doc: any, answers: Record<string, number>) {
-    const cx = 150;
-    const cy = 125;
-    const radius = 38;
-    const axes = QUESTIONS;
-    const step = (Math.PI * 2) / axes.length;
-
-    // grade concêntrica
-    doc.setDrawColor(210);
-    doc.setLineWidth(0.2);
-    [0.3, 0.6, 1].forEach((r) => {
-        doc.circle(cx, cy, radius * r, 'S');
-    });
-
-    // eixos + labels
-    axes.forEach((axis, idx) => {
-        const angle = -Math.PI / 2 + idx * step;
-        const x = cx + radius * Math.cos(angle);
-        const y = cy + radius * Math.sin(angle);
-        doc.line(cx, cy, x, y);
-        const labelX = cx + (radius + 12) * Math.cos(angle);
-        const labelY = cy + (radius + 12) * Math.sin(angle);
-        doc.setFontSize(8);
-        doc.text(axis.area, labelX - 8, labelY);
-    });
-
-    // polígono da pontuação
-    const points = axes.map((axis, idx) => {
-        const score = (answers[axis.id] ?? 0) / 10;
-        const angle = -Math.PI / 2 + idx * step;
-        return [
-            cx + radius * score * Math.cos(angle),
-            cy + radius * score * Math.sin(angle),
-        ];
-    });
-
-    doc.setDrawColor(252, 191, 24);
-    doc.setFillColor(252, 191, 24, 0.45);
-    doc.setLineWidth(0.9);
-    if (typeof (doc as any).polygon === 'function') {
-        (doc as any).polygon(points, 'FD');
-    } else {
-        doc.setFillColor(252, 191, 24);
-        doc.setDrawColor(252, 191, 24);
-        doc.setLineWidth(0.7);
-        doc.lines(
-            points.map(([x, y], idx) => {
-                const [nx, ny] = points[(idx + 1) % points.length];
-                return [nx - x, ny - y];
-            }),
-            points[0][0],
-            points[0][1],
-            [1, 1],
-            'FD',
-            true
-        );
-    }
-}
+// Radar removido conforme pedido; mantemos função vazia para evitar erros
+function drawRadar(_doc: any, _answers: Record<string, number>) { }
 
 function bucketRecommendation(score: number) {
     if (score >= 8) return 'Você já tem uma base sólida; podemos adicionar eficiência fiscal e oportunidades globais.';
@@ -116,15 +66,13 @@ function generatePdf(answers: Record<string, number>, lead: Lead, ai?: AiInsight
     const doc = new jsPDF();
     // Header block
     doc.setFillColor(12, 20, 40);
-    doc.rect(0, 0, 210, 36, 'F');
+    doc.rect(0, 0, 210, 32, 'F');
     doc.setTextColor(252, 191, 24);
     doc.setFontSize(18);
     doc.text('Diagnóstico Patrimonial - Wenvest', 20, 18);
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(12);
     doc.text(`Nome: ${lead.name || '---'}`, 20, 26);
-    doc.text(`Email: ${lead.email || '---'}`, 80, 26);
-    doc.text(`Telefone: ${lead.phone || '---'}`, 150, 26);
 
     // Cards de resultados + radar lado a lado
     doc.setTextColor(0, 0, 0);
@@ -139,15 +87,14 @@ function generatePdf(answers: Record<string, number>, lead: Lead, ai?: AiInsight
     });
     doc.text(`Média geral: ${avg.toFixed(1)}/10`, 24, y + 4);
 
-    // Radar visual ao lado (centralizado verticalmente)
-    drawRadar(doc, answers);
+    // Espaço à direita reservado (radar removido)
 
     // Bloco recomendações + próximos passos + CTA em um cartão maior
-    let recY = 150;
+    let recY = 120;
     doc.setFontSize(13);
     doc.setTextColor(12, 20, 40);
     doc.setFillColor(245, 249, 255);
-    doc.roundedRect(16, recY - 12, 178, 70, 3, 3, 'F');
+    doc.roundedRect(16, recY - 12, 178, 80, 3, 3, 'F');
     doc.text('Recomendações (IA + consultor):', 20, recY);
     recY += 8;
     doc.setTextColor(33, 37, 41);
@@ -156,6 +103,12 @@ function generatePdf(answers: Record<string, number>, lead: Lead, ai?: AiInsight
         if (ai.summary) { doc.text(`Resumo: ${ai.summary}`, 20, recY); recY += 7; }
         if (ai.risks) { doc.text(`Riscos: ${ai.risks}`, 20, recY); recY += 7; }
         if (ai.opportunities) { doc.text(`Oportunidades: ${ai.opportunities}`, 20, recY); recY += 7; }
+        if (ai.swot) {
+            if (ai.swot.strengths?.length) { doc.text(`Forças: ${ai.swot.strengths.slice(0,2).join('; ')}`, 20, recY); recY += 7; }
+            if (ai.swot.weaknesses?.length) { doc.text(`Fraquezas: ${ai.swot.weaknesses.slice(0,2).join('; ')}`, 20, recY); recY += 7; }
+            if (ai.swot.opportunities_detail?.length) { doc.text(`Oportunidades detalhadas: ${ai.swot.opportunities_detail.slice(0,2).join('; ')}`, 20, recY); recY += 7; }
+            if (ai.swot.threats?.length) { doc.text(`Ameaças: ${ai.swot.threats.slice(0,2).join('; ')}`, 20, recY); recY += 7; }
+        }
     } else {
         QUESTIONS.forEach((q) => {
             const score = answers[q.id] ?? 0;
