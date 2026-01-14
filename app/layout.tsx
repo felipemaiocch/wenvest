@@ -79,7 +79,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" className={`${outfit.variable} antialiased`}>
-      <body className="font-sans antialiased bg-background text-foreground h-dvh w-screen overflow-hidden">
+      <body className="font-sans antialiased bg-background text-foreground min-h-screen w-full overflow-x-hidden">
         {children}
       </body>
     </html>
