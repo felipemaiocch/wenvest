@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { cn } from '@/lib/utils';
 
 interface ClientHeaderProps {
@@ -11,6 +11,7 @@ interface ClientHeaderProps {
 
 export function ClientHeader({ clientId, clientName }: ClientHeaderProps) {
     const pathname = usePathname();
+    const router = useRouter();
 
     const tabs = [
         { label: 'Resumo', href: `/client/${clientId}/summary` },
@@ -35,18 +36,18 @@ export function ClientHeader({ clientId, clientName }: ClientHeaderProps) {
             <div className="border-b border-border/60">
                 <nav className="flex gap-6 overflow-x-auto scrollbar-hide -mb-px">
                     {tabs.map((tab) => (
-                        <Link key={tab.href} href={tab.href}>
-                            <div
-                                className={cn(
-                                    "pb-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap",
-                                    isActive(tab.href)
-                                        ? "border-emerald-500 text-emerald-600"
-                                        : "border-transparent text-muted-foreground hover:text-foreground hover:border-slate-300"
-                                )}
-                            >
-                                {tab.label}
-                            </div>
-                        </Link>
+                        <button
+                            key={tab.href}
+                            onClick={() => router.push(tab.href)}
+                            className={cn(
+                                "pb-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap bg-transparent",
+                                isActive(tab.href)
+                                    ? "border-emerald-500 text-emerald-600"
+                                    : "border-transparent text-muted-foreground hover:text-foreground hover:border-slate-300"
+                            )}
+                        >
+                            {tab.label}
+                        </button>
                     ))}
                 </nav>
             </div>
