@@ -1,7 +1,6 @@
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
     AreaChart,
     Area,
@@ -9,54 +8,66 @@ import {
     YAxis,
     CartesianGrid,
     Tooltip,
-    ResponsiveContainer
+    ResponsiveContainer,
+    LineChart,
+    Line,
+    BarChart,
+    Bar,
+    Legend
 } from 'recharts';
 import { useMemo } from 'react';
 
-interface ProfitabilityChartProps {
-    transactions: any[];
+interface PerformancePoint {
+    date: string;
+    value: number;
+    invested: number;
+    return: number;
 }
 
-export function ProfitabilityChart({ transactions }: ProfitabilityChartProps) {
-    const data = useMemo(() => {
-        if (!transactions || transactions.length === 0) return [];
+interface ProfitabilityChartProps {
+    performance: PerformancePoint[];
+}
 
-        // Sort by date ascending
-        const sorted = [...transactions].sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+export function ProfitabilityChart({ performance }: ProfitabilityChartProps) {
+    const { mainSeries, monthly, yearly } = useMemo(() => {
+        if (!performance || performance.length === 0) {
+            return { mainSeries: [], monthly: [], yearly: [] };
+        }
 
-        // Create cumulative sum line
-        let cumulative = 0;
-        const lineData: any[] = [];
+        const main = performance.map(p => ({
+            date: new Date(p.date).toLocaleDateString('pt-BR'),
+            invested: Number(p.invested),
+            value: Number(p.value),
+            variation: Number(p.return)
+        }));
 
-        sorted.forEach(t => {
-            const val = Number(t.total);
-            if (t.type === 'BUY') cumulative += val;
-            if (t.type === 'SELL') cumulative -= val;
-            // Dividend doesn't change "Invested Capital" strictly speaking, but increases "Cash". 
-            // For now let's track "Invested/Cash Flow" so maybe ignore DIVIDEND or treat as cash in?
-            // User likely sees "Balance" chart. Let's include DIVIDEND as positive flow if we want "Total Value" proxy, 
-            // or exclude if we want "Cost Basis".
-            // Let's stick to "Cost Basis" (Money In vs Money Out)
-
-            lineData.push({
-                date: new Date(t.date).toLocaleDateString('pt-BR'),
-                rawDate: new Date(t.date).getTime(),
-                value: cumulative
-            });
+        const monthlyMap = new Map<string, { date: string; ret: number }>();
+        performance.forEach(p => {
+            const d = new Date(p.date);
+            const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+            monthlyMap.set(key, { date: `${String(d.getMonth() + 1).padStart(2, '0')}/${d.getFullYear()}`, ret: p.return });
         });
 
-        // Group by day to avoid jagged multiple points per day? For MVP just push all.
-        // Better: just take the last value of the day if multiple txs.
+        const yearlyMap = new Map<string, { date: string; ret: number }>();
+        performance.forEach(p => {
+            const d = new Date(p.date);
+            const key = `${d.getFullYear()}`;
+            yearlyMap.set(key, { date: key, ret: p.return });
+        });
 
-        return lineData;
-    }, [transactions]);
+        return {
+            mainSeries: main,
+            monthly: Array.from(monthlyMap.values()),
+            yearly: Array.from(yearlyMap.values())
+        };
+    }, [performance]);
 
-    if (data.length === 0) {
+    if (mainSeries.length === 0) {
         return (
             <Card className="border border-border/60 shadow-sm h-[400px]">
                 <CardHeader className="pb-2 border-b border-border/40 bg-slate-50/50">
                     <CardTitle className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
-                        Evolução Patrimonial (Aportes)
+                        Evolução Patrimonial
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="h-full flex flex-col items-center justify-center text-muted-foreground bg-slate-50/20">
@@ -71,67 +82,72 @@ export function ProfitabilityChart({ transactions }: ProfitabilityChartProps) {
             <CardHeader className="pb-4 border-b border-border/40 bg-slate-50/50 flex flex-row items-center justify-between">
                 <div className="flex items-center gap-2">
                     <CardTitle className="text-sm font-semibold text-slate-700 uppercase tracking-wide">
-                        Evolução do Patrimônio Investido
+                        Evolução do Patrimônio vs. Investido
                     </CardTitle>
                 </div>
-                <div className="flex gap-2">
-                    <Select defaultValue="all">
-                        <SelectTrigger className="h-8 text-xs w-28 bg-white">
-                            <SelectValue placeholder="Período" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="all">Desde o início</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
             </CardHeader>
-            <CardContent className="h-[400px] p-4">
-                <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart
-                        data={data}
-                        margin={{
-                            top: 10,
-                            right: 10,
-                            left: 0,
-                            bottom: 0,
-                        }}
-                    >
-                        <defs>
-                            <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#10b981" stopOpacity={0.1} />
-                                <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
-                            </linearGradient>
-                        </defs>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
-                        <XAxis
-                            dataKey="date"
-                            tick={{ fontSize: 10, fill: '#64748b' }}
-                            axisLine={false}
-                            tickLine={false}
-                            minTickGap={30}
-                        />
-                        <YAxis
-                            tick={{ fontSize: 10, fill: '#64748b' }}
-                            axisLine={false}
-                            tickLine={false}
-                            tickFormatter={(value) => `R$ ${(value / 1000).toFixed(0)}k`}
-                        />
-                        <Tooltip
-                            contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
-                            formatter={(value: number | undefined) => value ? [`R$ ${value.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, 'Investido'] : ['R$ 0,00', 'Investido']}
-                        />
-                        <Area
-                            type="monotone"
-                            dataKey="value"
-                            stroke="#10b981"
-                            strokeWidth={2}
-                            fill="url(#colorValue)"
-                        />
-                    </AreaChart>
-                </ResponsiveContainer>
+            <CardContent className="space-y-8 p-4">
+                <div className="h-[320px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <LineChart
+                            data={mainSeries}
+                            margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+                        >
+                            <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                            <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#64748b' }} axisLine={false} tickLine={false} minTickGap={24} />
+                            <YAxis tick={{ fontSize: 10, fill: '#64748b' }} axisLine={false} tickLine={false} tickFormatter={(value) => `R$ ${(value / 1000).toFixed(0)}k`} />
+                            <Tooltip
+                                contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                                formatter={(value: number | undefined, name) => {
+                                    if (name === 'variation') return [`${(value || 0).toFixed(2)}%`, 'Variação'];
+                                    return [`R$ ${(value || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`, name === 'value' ? 'Valor de Mercado' : 'Investido'];
+                                }}
+                            />
+                            <Legend />
+                            <Line type="monotone" dataKey="invested" name="Investido" stroke="#94a3b8" strokeWidth={2} dot={false} />
+                            <Line type="monotone" dataKey="value" name="Valor de Mercado" stroke="#10b981" strokeWidth={3} dot={false} />
+                        </LineChart>
+                    </ResponsiveContainer>
+                </div>
 
-                <div className="mt-2 p-2 bg-yellow-50 border border-yellow-100 rounded text-[10px] text-yellow-700 text-center">
-                    * Este gráfico mostra a evolução dos seus aportes acumulados. A variação de mercado (rentabilidade real) será ativada em breve.
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <Card className="border border-border/60 shadow-sm">
+                        <CardHeader className="pb-2 border-b border-border/40 bg-slate-50/50">
+                            <CardTitle className="text-xs font-semibold text-slate-700 uppercase tracking-wide">
+                                Rentabilidade Mensal
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="h-[220px] p-4">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart data={monthly}>
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                                    <XAxis dataKey="date" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
+                                    <YAxis tick={{ fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={(v) => `${v}%`} />
+                                    <Tooltip formatter={(v: number) => [`${(v || 0).toFixed(2)}%`, 'Rentabilidade']} />
+                                    <Bar dataKey="ret" fill="#0ea5e9" radius={[4, 4, 0, 0]} />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </CardContent>
+                    </Card>
+
+                    <Card className="border border-border/60 shadow-sm">
+                        <CardHeader className="pb-2 border-b border-border/40 bg-slate-50/50">
+                            <CardTitle className="text-xs font-semibold text-slate-700 uppercase tracking-wide">
+                                Rentabilidade Anual
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="h-[220px] p-4">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart data={yearly}>
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
+                                    <XAxis dataKey="date" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
+                                    <YAxis tick={{ fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={(v) => `${v}%`} />
+                                    <Tooltip formatter={(v: number) => [`${(v || 0).toFixed(2)}%`, 'Rentabilidade']} />
+                                    <Bar dataKey="ret" fill="#f59e0b" radius={[4, 4, 0, 0]} />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </CardContent>
+                    </Card>
                 </div>
             </CardContent>
         </Card>

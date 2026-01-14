@@ -22,7 +22,7 @@ export function AssetSearch({ onSelect }: AssetSearchProps) {
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        if (!query || query.length < 3) {
+        if (!query || query.length < 2) {
             setResults([]);
             setLoading(false);
             return;
@@ -31,15 +31,15 @@ export function AssetSearch({ onSelect }: AssetSearchProps) {
         const timer = setTimeout(async () => {
             setLoading(true);
             try {
-                const result = await searchAssetUnified(query);
-                setResults(result ? [result] : []);
+                const found = await searchAssetUnified(query);
+                setResults(found || []);
             } catch (error) {
                 console.error('Search error:', error);
                 setResults([]);
             } finally {
                 setLoading(false);
             }
-        }, 500);
+        }, 400);
 
         return () => clearTimeout(timer);
     }, [query]);
@@ -50,7 +50,7 @@ export function AssetSearch({ onSelect }: AssetSearchProps) {
                 <Search className="absolute left-3 top-3 h-5 w-5 text-muted-foreground" />
                 <Input
                     type="text"
-                    placeholder="Buscar por ticker ou CNPJ (ex: PETR4, 52.239.457/0001-57)"
+                    placeholder="Buscar por ticker, nome ou CNPJ (ex: WEGE3, AAPL, 52.239.457/0001-57)"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     className="pl-10 bg-card/50 border-primary/20 focus-visible:ring-primary"
@@ -77,7 +77,7 @@ export function AssetSearch({ onSelect }: AssetSearchProps) {
                         </CardContent>
                     </Card>
                 ))}
-                {query.length > 1 && results.length === 0 && (
+                {query.length > 1 && results.length === 0 && !loading && (
                     <div className="text-center text-muted-foreground py-4">Nenhum ativo encontrado.</div>
                 )}
             </div>

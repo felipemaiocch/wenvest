@@ -15,10 +15,15 @@ export function DrawdownChart({ portfolioId }: DrawdownChartProps) {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        calculateDrawdown(portfolioId).then(result => {
-            setData(result);
-            setLoading(false);
-        });
+        calculateDrawdown(portfolioId)
+            .then(result => {
+                setData(result);
+                setLoading(false);
+            })
+            .catch(() => {
+                setData(null);
+                setLoading(false);
+            });
     }, [portfolioId]);
 
     if (loading) {

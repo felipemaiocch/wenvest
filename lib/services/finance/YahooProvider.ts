@@ -1,5 +1,7 @@
 import { MarketDataProvider, Quote } from "./types";
-import yahooFinance from 'yahoo-finance2';
+import YahooFinance from 'yahoo-finance2';
+
+const yahooFinance = new YahooFinance();
 
 export class YahooProvider implements MarketDataProvider {
     async getQuote(ticker: string): Promise<Quote | null> {

@@ -59,7 +59,8 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
 
   // Theme color
-  themeColor: '#fcbf18',
+  // Removido para evitar warning; usar viewport.themeColor
+  // themeColor: '#fcbf18',
 };
 
 export const viewport: Viewport = {

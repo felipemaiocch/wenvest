@@ -28,27 +28,14 @@ export default function AddAssetPage() {
         setStep('form');
 
         try {
-            // Import dynamically or if defined above
-            // Using require/import might clear cache? It's fine.
-            // But we need to import it at top. Assuming I added import in next step or use quick replace.
-            // Wait, I cannot import in restricted scope.
-            // I will add the import at top in a separate replace call if needed, or assume I can rewrite the file header too.
-            // Let's rewrite the handleSelect AND add import at top in one go? No, separate chunks.
-            // I'll rewrite handleSelect here, but I need to `import { getQuote }` at top first or it fails.
-
-            // I'll just do the import first in another call to be safe, or do it here if I am updating the file header.
-            // I'll do header update next.
-
-            // For now, write the logic assuming getQuote is available.
-
-            // const quote = await getQuote(ticker);
-            // setPrice(quote?.price.toString() || '');
+            const quote = await getQuote(ticker);
+            if (quote?.price) {
+                setPrice(Number(quote.price).toString());
+            }
         } catch (e) {
             console.error(e);
         }
     };
-    // Wait, I need to do it properly.
-    // I will replace the TOP of file first to add import.
 
     const handleSave = async () => {
         if (!qty || !price || !selectedTicker) return;

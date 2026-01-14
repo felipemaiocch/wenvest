@@ -99,62 +99,76 @@ export async function findTickerForFund(fundName: string, cnpj: string): Promise
  */
 export async function searchAssetUnified(query: string) {
     const cleanQuery = query.trim();
+    if (!cleanQuery) return [];
 
-    // Check if it's a CNPJ (14 digits with or without formatting)
+    const results: { symbol: string; name: string; type: string; extra?: any }[] = [];
+    const dedupe = new Set<string>();
+
+    const push = (item: { symbol: string; name: string; type: string; extra?: any }) => {
+        if (!item.symbol || dedupe.has(item.symbol)) return;
+        dedupe.add(item.symbol);
+        results.push(item);
+    };
+
+    // CNPJ lookup
     const cnpjPattern = /^\d{2}\.?\d{3}\.?\d{3}\/?\d{4}-?\d{2}$/;
-
     if (cnpjPattern.test(cleanQuery)) {
-        // It's a CNPJ - search CVM
         const fundData = await searchFundByCNPJ(cleanQuery);
-
         if (fundData) {
-            // Try to find ticker
             const ticker = await findTickerForFund(fundData.nome, fundData.cnpj);
-
-            return {
+            push({
                 symbol: ticker || fundData.cnpj,
                 name: fundData.nome,
                 type: 'FUND',
-                cnpj: fundData.cnpj,
-                hasTicker: !!ticker
-            };
+                extra: { cnpj: fundData.cnpj }
+            });
+            return results;
         }
-
-        return null;
     }
 
-    //It's a ticker - use existing Brapi search
+    // Yahoo search (funciona para BR/US/ETFs)
+    try {
+        const res = await fetch(`https://query1.finance.yahoo.com/v1/finance/search?q=${encodeURIComponent(cleanQuery)}&lang=pt-BR&region=BR&quotesCount=10&newsCount=0`, {
+            cache: 'no-store'
+        });
+        if (res.ok) {
+            const data = await res.json();
+            (data.quotes || []).forEach((q: any) => {
+                if (!q.symbol) return;
+                const type = q.quoteType || 'EQUITY';
+                push({
+                    symbol: q.symbol,
+                    name: q.longname || q.shortname || q.symbol,
+                    type
+                });
+            });
+        }
+    } catch (err) {
+        console.error('Yahoo search error', err);
+    }
+
+    // Tentativa direta na Brapi (melhor para tickers BR simples)
     try {
         const apiKey = process.env.BRAPI_API_KEY || '';
         const url = apiKey
             ? `https://brapi.dev/api/quote/${cleanQuery}?token=${apiKey}`
             : `https://brapi.dev/api/quote/${cleanQuery}`;
 
-        const response = await fetch(url, {
-            next: { revalidate: 300 }
-        });
-
-        if (!response.ok) {
-            console.error(`Brapi error for ${cleanQuery}:`, response.status);
-            return null;
+        const response = await fetch(url, { next: { revalidate: 300 } });
+        if (response.ok) {
+            const data = await response.json();
+            const result = data.results?.[0];
+            if (result) {
+                push({
+                    symbol: result.symbol,
+                    name: result.longName || result.shortName || result.symbol,
+                    type: result.type || 'STOCK'
+                });
+            }
         }
-
-        const data = await response.json();
-        const result = data.results?.[0];
-
-        if (result) {
-            return {
-                symbol: result.symbol,
-                name: result.longName || result.shortName || result.symbol,
-                type: result.type || 'STOCK',
-                price: result.regularMarketPrice
-            };
-        }
-
-        console.log(`No results found for ticker: ${cleanQuery}`);
     } catch (error) {
-        console.error('Error searching asset:', error);
+        console.error('Brapi search error:', error);
     }
 
-    return null;
+    return results;
 }

@@ -1,10 +1,10 @@
-import { getTransactions } from "@/actions/transaction";
+import { getPortfolioPerformance } from "@/actions/portfolioSummary";
 import { ProfitabilityChart } from "@/components/dashboard/performance/ProfitabilityChart";
 import { Info } from "lucide-react";
 
 export default async function PerformancePage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
-    const transactions = await getTransactions(id);
+    const performance = await getPortfolioPerformance(id);
 
     return (
         <div className="flex flex-col gap-8 pb-10 max-w-4xl">
@@ -18,7 +18,7 @@ export default async function PerformancePage({ params }: { params: Promise<{ id
 
             {/* 1. Main Chart */}
             <section>
-                <ProfitabilityChart transactions={transactions || []} />
+                <ProfitabilityChart performance={performance || []} />
             </section>
 
         </div>

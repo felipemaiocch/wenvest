@@ -3,8 +3,6 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { Download, Plus, FileText } from 'lucide-react';
 
 interface ClientHeaderProps {
     clientId: string;
@@ -30,21 +28,6 @@ export function ClientHeader({ clientId, clientName }: ClientHeaderProps) {
                 <div>
                     <h1 className="text-2xl font-bold tracking-tight text-slate-900">{clientName}</h1>
                     <p className="text-sm text-muted-foreground">Carteira Consolidada</p>
-                </div>
-
-                <div className="flex items-center gap-2">
-                    <Link href={`/client/${clientId}/transactions`}>
-                        <Button variant="outline" className="gap-2">
-                            <FileText size={16} />
-                            Ver Extrato
-                        </Button>
-                    </Link>
-                    <Link href={`/client/${clientId}/add`}>
-                        <Button className="gap-2 bg-[#fcbf18] hover:bg-[#e5ad15] text-slate-900">
-                            <Plus size={16} />
-                            Novo Aporte
-                        </Button>
-                    </Link>
                 </div>
             </div>
 

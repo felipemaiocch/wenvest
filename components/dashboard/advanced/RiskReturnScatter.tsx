@@ -15,10 +15,15 @@ export function RiskReturnScatter({ portfolioId }: RiskReturnScatterProps) {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        calculateRiskReturn(portfolioId).then(result => {
-            setData(result);
-            setLoading(false);
-        });
+        calculateRiskReturn(portfolioId)
+            .then(result => {
+                setData(result);
+                setLoading(false);
+            })
+            .catch(() => {
+                setData(null);
+                setLoading(false);
+            });
     }, [portfolioId]);
 
     if (loading) {

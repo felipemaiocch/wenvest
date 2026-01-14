@@ -1,4 +1,5 @@
 import { getTransactions } from "@/actions/transaction";
+import { getEstimatedDividends } from "@/actions/dividends";
 import { TransactionsTable } from "@/components/dashboard/transactions/TransactionsTable";
 import { DividendsSummary } from "@/components/dashboard/dividends/DividendsSummary";
 import { DividendsMatrix } from "@/components/dashboard/dividends/DividendsMatrix";
@@ -8,7 +9,21 @@ import { Info } from "lucide-react";
 export default async function DividendsPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
     const allTransactions = await getTransactions(id);
-    const dividends = allTransactions?.filter((t: any) => t.type === 'DIVIDEND') || [];
+    const manualDividends = allTransactions?.filter((t: any) => t.type === 'DIVIDEND') || [];
+    const estimated = await getEstimatedDividends(id);
+
+    const estimatedAsTx = estimated.map((d) => ({
+        id: `${d.ticker}-${d.date}-auto`,
+        ticker: d.ticker,
+        type: 'DIVIDEND',
+        date: d.date,
+        qty: d.quantity,
+        price: d.amount,
+        total: d.total,
+        origin: 'Automático'
+    }));
+
+    const dividends = [...manualDividends, ...estimatedAsTx];
 
     return (
         <div className="flex flex-col gap-8 pb-10">

@@ -41,7 +41,13 @@ export class FinanceService {
 
         console.log(`[FinanceService] Fetching LIVE for ${ticker}`);
         const provider = this.getProvider(ticker);
-        const quote = await provider.getQuote(ticker);
+        let quote = await provider.getQuote(ticker);
+
+        // Fallback para Yahoo se Brapi falhar (ex.: 401 por falta de token)
+        if (!quote && provider === this.brapi) {
+            const yahooTicker = ticker.endsWith('.SA') ? ticker : `${ticker}.SA`;
+            quote = await this.yahoo.getQuote(yahooTicker);
+        }
 
         if (quote) {
             this.cache.set(ticker, { quote, expires: now + CACHE_TTL_MS });

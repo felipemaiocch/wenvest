@@ -14,10 +14,15 @@ export function PerformanceIndicators({ portfolioId }: PerformanceIndicatorsProp
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        calculatePortfolioMetrics(portfolioId).then(data => {
-            setMetrics(data);
-            setLoading(false);
-        });
+        calculatePortfolioMetrics(portfolioId)
+            .then(data => {
+                setMetrics(data);
+                setLoading(false);
+            })
+            .catch(() => {
+                setMetrics(null);
+                setLoading(false);
+            });
     }, [portfolioId]);
 
     // Estado de Loading
