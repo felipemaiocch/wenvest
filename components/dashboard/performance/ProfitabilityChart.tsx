@@ -122,8 +122,8 @@ export function ProfitabilityChart({ performance }: ProfitabilityChartProps) {
                                 <BarChart data={monthly}>
                                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
                                     <XAxis dataKey="date" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
-                                    <YAxis tick={{ fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={(v) => `${v}%`} />
-                                    <Tooltip formatter={(v: number) => [`${(v || 0).toFixed(2)}%`, 'Rentabilidade']} />
+                        <YAxis tick={{ fontSize: 10 }} axisLine={false} tickLine={false} tickFormatter={(v) => `${v}%`} />
+                        <Tooltip formatter={(v?: number) => [`${(v ?? 0).toFixed(2)}%`, 'Rentabilidade']} />
                                     <Bar dataKey="ret" fill="#0ea5e9" radius={[4, 4, 0, 0]} />
                                 </BarChart>
                             </ResponsiveContainer>
