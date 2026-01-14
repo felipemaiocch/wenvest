@@ -45,12 +45,12 @@ export default function LandingPage() {
                     <h1 className="text-5xl md:text-7xl font-bold tracking-tight leading-tight drop-shadow-xl">
                         Seu patrimônio, <br />
                         <span className="bg-clip-text text-transparent bg-gradient-to-r from-[#fcbf18] via-amber-200 to-white">
-                            unificado, modelado e vivo.
+                            unificado e inteligente.
                         </span>
                     </h1>
 
                     <p className="text-xl text-slate-200/80 max-w-2xl mx-auto leading-relaxed">
-                        Consolide ativos onshore e offshore, acompanhe risco x retorno em tempo real e entregue visão 360º para seus clientes.
+                        Tenha uma visão 360º dos seus investimentos no Brasil e no exterior. Análises avançadas, consolidação automática e insights em tempo real.
                     </p>
 
                     <div className="pt-6" />
