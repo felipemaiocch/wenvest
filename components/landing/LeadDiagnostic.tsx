@@ -136,11 +136,12 @@ function generatePdf(answers: Record<string, number>, lead: Lead, ai?: AiInsight
     doc.text('Índice de maturidade', margin + 4, y + 38);
 
     // Status badge
+    // Status badge (altura maior para não colidir com texto)
     doc.setFillColor(...status.color);
     doc.setTextColor(255, 255, 255);
-    doc.roundedRect(margin + 42, y + 22, 40, 8, 2, 2, 'F');
-    doc.setFontSize(9);
-    doc.text(status.label, margin + 62, y + 28, { align: 'center' });
+    doc.roundedRect(margin + 42, y + 20, 46, 10, 2, 2, 'F');
+    doc.setFontSize(9.5);
+    doc.text(status.label, margin + 65, y + 27, { align: 'center' });
     doc.setTextColor(textDark.r, textDark.g, textDark.b);
 
     // Mini insight
